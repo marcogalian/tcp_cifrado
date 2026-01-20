@@ -1,43 +1,38 @@
 package tcp;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Servidor {
-
     public static void main(String[] args) {
-        try {
-            // 1. Crear un ServerSocket en el puerto 12345
-            ServerSocket serverSocket = new ServerSocket(12345);
-            System.out.println("servidor.Servidor escuchando en el puerto 12345...");
+        try (ServerSocket serverSocket = new ServerSocket(8080)) {
+            System.out.println("Servidor 'Marco' activo. Esperando conexión persistente...");
 
-            // 2. Esperar y aceptar conexiones de clientes
-            Socket clientSocket = serverSocket.accept(); // Aquí se usa accept()
-            System.out.println("cliente.Cliente conectado: " + clientSocket.getInetAddress());
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("¡Compañero conectado!");
 
-            // 3. Crear flujos para la comunicación
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                // Mantenemos la conexión abierta para este cliente
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-            // 4. Leer un mensaje del cliente
-            String mensajeCliente = in.readLine();
-            System.out.println("Mensaje del cliente: " + mensajeCliente);
+                    String mensajeCifrado;
+                    // Bucle que mantiene la charla abierta
+                    while ((mensajeCifrado = in.readLine()) != null) {
+                        String mensajeClaro = Cifrado.desencriptar(mensajeCifrado);
+                        System.out.println("Compañero: " + mensajeClaro);
 
-            // 5. Enviar una respuesta al cliente
-            out.println("Hola, cliente. Recibí tu mensaje: " + mensajeCliente);
-
-            // 6. Cerrar los recursos
-            in.close();
-            out.close();
-            clientSocket.close();
-            serverSocket.close();
+                        // Responder algo para confirmar
+                        String respuesta = "Marco dice: He recibido '" + mensajeClaro + "'";
+                        out.println(Cifrado.encriptar(respuesta));
+                    }
+                } catch (Exception e) {
+                    System.out.println("Conexión finalizada con el cliente.");
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
