@@ -9,8 +9,9 @@ import java.net.Socket;
 public class Cliente {
     public static void main(String[] args) {
         try {
-            // 1. Conectarse al servidor en localhost:12345
-            Socket socket = new Socket("127.0.0.1", 12345);
+            // 1. Para conectarse al servidor
+            String hostname ="Marco.local";
+            Socket socket = new Socket(hostname, 8080);
             System.out.println("Conectado al servidor");
 
             // 2. Crear flujos para enviar y recibir datos
