@@ -33,3 +33,6 @@ bin/
    *.iml
    *.iws
    *.ipr
+
+### Configuracion local
+**/Config.java
