@@ -5,32 +5,38 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        try {
-            // 1. Para conectarse al servidor
-            String hostname ="Marco.local";
-            Socket socket = new Socket(hostname, 8080);
-            System.out.println("Conectado al servidor");
+        // 1. Para conectarse al servidor
+        String hostname = "Marco.local";
+        try (Socket socket = new Socket(hostname, 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             Scanner sc = new Scanner(System.in)) {
 
-            // 2. Crear flujos para enviar y recibir datos
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            System.out.println("Conectado a Marco. Escribe mensajes (o 'salir' para terminar):");
 
-            // 3. Enviar un mensaje al servidor
-            out.println("Hola, servidor. Soy el cliente.");
+            while (true) {
+                System.out.print("> ");
+                String texto = sc.nextLine();
 
-            // 4. Leer la respuesta del servidor
-            String respuestaServidor = in.readLine();
-            System.out.println("Respuesta del servidor: " + respuestaServidor);
+                if (texto.equalsIgnoreCase("salir")) break;
+                // 1. Enviar cifrado
+                out.println(Cifrado.encriptar(texto));
 
-            // 5. Cerrar los recursos
-            in.close();
-            out.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+                // 2. Recibir y descifrar respuesta
+                String respuestaCifrada = in.readLine();
+                if (respuestaCifrada != null) {
+                    System.out.println("Respuesta: " + Cifrado.desencriptar(respuestaCifrada));
+
+
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error de conexión: " + e.getMessage());
         }
     }
 
