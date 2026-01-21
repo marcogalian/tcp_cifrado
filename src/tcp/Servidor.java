@@ -11,7 +11,7 @@ public class Servidor {
 
             System.out.println("Servidor 'Marco' activo. Esperando conexión persistente...");
 
-            // Bucle infinito para no cerrar el servidor a no se que el cliente
+            // Bucle infinito para no cerrar el servidor al cliente actual
             while (true) {
                 // Modo de espera hasta que el cliente entra en funcionamiento (clic en play)
                 // Una vez hace play el cliente se crea el "cable virtual" (clientSocket)
