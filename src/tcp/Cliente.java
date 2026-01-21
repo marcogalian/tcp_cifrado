@@ -9,34 +9,49 @@ import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
-        // 1. Para conectarse al servidor
-        String hostname = "Marco.local";
-        try (Socket socket = new Socket(hostname, 8080);
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             Scanner sc = new Scanner(System.in)) {
+        try {
+            // 1. Para conectarse al servidor usando la configuración
+            Socket socket = new Socket(Config.SERVER_HOSTNAME, Config.SERVER_PORT);
+            System.out.println("Conectado al servidor");
 
-            System.out.println("Conectado a Marco. Escribe mensajes (o 'salir' para terminar):");
+            // 2. Crear flujos para enviar y recibir datos
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
+            // Scanner para leer mensajes del usuario
+            Scanner scanner = new Scanner(System.in);
+
+            // 3. Bucle para enviar múltiples mensajes
             while (true) {
-                System.out.print("> ");
-                String texto = sc.nextLine();
+                System.out.print("\nEscribe un mensaje (o 'salir' para terminar): ");
+                String mensajeOriginal = scanner.nextLine();
 
-                if (texto.equalsIgnoreCase("salir")) break;
-                // 1. Enviar cifrado
-                out.println(Cifrado.encriptar(texto));
-
-                // 2. Recibir y descifrar respuesta
-                String respuestaCifrada = in.readLine();
-                if (respuestaCifrada != null) {
-                    System.out.println("Respuesta: " + Cifrado.desencriptar(respuestaCifrada));
-
-
+                if (mensajeOriginal.equalsIgnoreCase("salir")) {
+                    break;
                 }
+
+                // Cifrar y enviar
+                String mensajeCifrado = Cifrado.encriptar(mensajeOriginal);
+                System.out.println("Mensaje cifrado enviado: " + mensajeCifrado);
+                out.println(mensajeCifrado);
+
+                // Recibir respuesta del servidor
+                String respuestaCifrada = in.readLine();
+                String respuesta = Cifrado.desencriptar(respuestaCifrada);
+                System.out.println("Respuesta del servidor: " + respuesta);
             }
 
+            // 4. Cerrar los recursos
+            scanner.close();
+            in.close();
+            out.close();
+            socket.close();
+            System.out.println("\nConexión cerrada.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (Exception e) {
-            System.err.println("Error de conexión: " + e.getMessage());
+            System.err.println("Error de cifrado: " + e.getMessage());
         }
     }
 
