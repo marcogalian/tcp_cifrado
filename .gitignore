@@ -1,4 +1,8 @@
 ### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -29,10 +33,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-.idea/
-   *.iml
-   *.iws
-   *.ipr
-
-### Configuracion local
+### Configuración local (no subir credenciales)
+Config.java
 **/Config.java
