@@ -5,20 +5,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 public class Cifrado {
-    // 1. Elegimos el tipo de cerradura a utilizar (Algoritmo)
-    private static final String ALGORITMO = "AES"; // AES es el estándar de seguridad más usado
-
-    // 2. Creamos la llave fisica
-    // Para AES, debe tener exactamente 16, 24 o 32 caracteres (bytes)
-    private static final String CLAVE = "ABC_123_SECRET_K";
-
 
     // MÉTODO PARA ENCRIPTAR (Cerrar la caja fuerte)
     public static String encriptar(String datos) throws Exception {
         // A. Preparamos la llave: Convertimos nuestro texto en una "llave real" que Java entienda
-        SecretKeySpec sk = new SecretKeySpec(CLAVE.getBytes(), ALGORITMO);
+        SecretKeySpec sk = new SecretKeySpec(Config.CLAVE.getBytes(), Config.ALGORITMO);
         // B. Pedimos la herramienta: Obtenemos una instancia del motor de cifrado AES
-        Cipher c = Cipher.getInstance(ALGORITMO);
+        Cipher c = Cipher.getInstance(Config.ALGORITMO);
         // C. Configuramos el modo: Le decimos al motor que su trabajo ahora es ENCRIPTAR (Cerrar)
         c.init(Cipher.ENCRYPT_MODE, sk);
         // D. Ejecutamos la acción: El texto se convierte en un montón de bytes ilegibles
@@ -32,9 +25,9 @@ public class Cifrado {
     // MÉTODO PARA DESENCRIPTAR (abrir la caja fuerte)
     public static String desencriptar(String datosCifrados) throws Exception {
         // A. Igual que antes, preparamos la llave (debe ser la misma)
-        SecretKeySpec sk = new SecretKeySpec(CLAVE.getBytes(), ALGORITMO);
+        SecretKeySpec sk = new SecretKeySpec(Config.CLAVE.getBytes(), Config.ALGORITMO);
         // B. Pedimos la misma herramienta (AES)
-        Cipher c = Cipher.getInstance(ALGORITMO);
+        Cipher c = Cipher.getInstance(Config.ALGORITMO);
         // C. Configuramos el modo: Ahora le decimos que su trabajo es DESENCRIPTAR (Abrir)
         c.init(Cipher.DECRYPT_MODE, sk);
         // D. Se le quita el envoltorio: Pasamos de texto Base64 a los bytes encriptados originales

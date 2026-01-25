@@ -8,7 +8,7 @@ public class Servidor {
     public static void main(String[] args) {
 
         // 1. Abrir la "Oficina" (Puerto)
-        try (ServerSocket serverSocket = new ServerSocket(8080)) {
+        try (ServerSocket serverSocket = new ServerSocket(Config.SERVER_PORT)) {
 
             System.out.println("Servidor 'Marco' activo. Esperando conexión persistente...");
 
